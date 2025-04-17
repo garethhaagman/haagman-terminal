@@ -8,31 +8,10 @@ const MediaSection = () => {
   const mediaStations = [
     { 
       id: 1, 
-      name: "Crypto Risk Today", 
-      frequency: "FM 101.2",
-      type: "PODCAST",
-      status: "TRANSMITTING"
-    },
-    { 
-      id: 2, 
-      name: "AI Insurance Weekly", 
-      frequency: "AM 570",
-      type: "INTERVIEW",
-      status: "STANDBY"
-    },
-    { 
-      id: 3, 
-      name: "Underwriter's Digest", 
-      frequency: "DAB 11.5",
-      type: "PUBLICATION",
-      status: "ARCHIVED" 
-    },
-    { 
-      id: 4, 
-      name: "The Risk Protocol", 
+      name: "Twitter Feed", 
       frequency: "SW 24.4",
-      type: "WHITEPAPER",
-      status: "CLASSIFIED" 
+      type: "SOCIAL",
+      status: "LIVE" 
     },
   ];
   
