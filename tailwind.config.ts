@@ -130,10 +130,20 @@ export default {
             transform: 'translateY(0)'
           }
         },
+        'fade-in': {
+          '0%': {
+            opacity: '0',
+            transform: 'scale(0.98)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'scale(1)'
+          }
+        },
         'slide-in': {
           '0%': {
-            transform: 'translateX(-100%)',
-            opacity: '0'
+            transform: 'translateX(-20px)',
+            opacity: '0.5'
           },
           '100%': {
             transform: 'translateX(0)',
@@ -146,7 +156,8 @@ export default {
 				'accordion-up': 'accordion-up 0.2s ease-out',
         'crt-flicker': 'crt-flicker 3s infinite',
         'boot-text': 'boot-text 0.3s ease-out forwards',
-        'slide-in': 'slide-in 0.2s ease-out forwards'
+        'fade-in': 'fade-in 0.2s ease-out forwards',
+        'slide-in': 'slide-in 0.15s ease-out forwards'
 			}
 		}
 	},

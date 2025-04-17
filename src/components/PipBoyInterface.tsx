@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import BioSection from './sections/BioSection';
@@ -67,19 +66,19 @@ const TerminalInterface = () => {
           </TabsList>
           
           <div className="flex-1 overflow-auto p-4">
-            <TabsContent value="status" className="h-full m-0 animate-slide-in">
+            <TabsContent value="status" className="h-full m-0 animate-fade-in">
               <BioSection />
             </TabsContent>
-            <TabsContent value="data" className="h-full m-0 animate-slide-in">
+            <TabsContent value="data" className="h-full m-0 animate-fade-in">
               <TimelineSection />
             </TabsContent>
-            <TabsContent value="files" className="h-full m-0 animate-slide-in">
+            <TabsContent value="files" className="h-full m-0 animate-fade-in">
               <ProjectsSection />
             </TabsContent>
-            <TabsContent value="radio" className="h-full m-0 animate-slide-in">
+            <TabsContent value="radio" className="h-full m-0 animate-fade-in">
               <MediaSection />
             </TabsContent>
-            <TabsContent value="comms" className="h-full m-0 animate-slide-in">
+            <TabsContent value="comms" className="h-full m-0 animate-fade-in">
               <ContactSection />
             </TabsContent>
           </div>
