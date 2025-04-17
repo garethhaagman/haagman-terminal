@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import BootSequence from './BootSequence';
-import PipBoyInterface from './PipBoyInterface';
+import TerminalInterface from './PipBoyInterface';
 import { useSoundEffects } from './SoundEffects';
 
 const PipBoy = () => {
@@ -27,7 +27,7 @@ const PipBoy = () => {
         {booting ? (
           <BootSequence />
         ) : (
-          <PipBoyInterface />
+          <TerminalInterface />
         )}
       </div>
     </div>

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 const BootSequence = () => {
   const [text, setText] = useState('');
-  const fullText = 'Testudo Systems // Accessing Insuru Guru Firmware v1.0 ...';
+  const fullText = 'Haagman Systems // Accessing Firmware v1.0 ...';
   
   useEffect(() => {
     let index = 0;

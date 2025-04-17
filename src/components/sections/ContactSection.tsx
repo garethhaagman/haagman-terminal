@@ -18,7 +18,7 @@ const ContactSection = () => {
       
       <div className="text-center mb-6">
         <h3 className="text-xl text-pipboy-amber mb-2">SECURE TRANSMISSION CHANNELS</h3>
-        <p className="text-sm">Select a channel to establish communication with Mark</p>
+        <p className="text-sm">Select a channel to establish communication with Gareth</p>
       </div>
       
       <div className="grid gap-6 md:grid-cols-3">
@@ -83,28 +83,28 @@ const ContactSection = () => {
             </DialogHeader>
             <div className="p-4">
               <div className="text-center mb-6 pip-text-glow">
-                <p>Select your preferred method to connect with Mark:</p>
+                <p>Select your preferred method to connect with Gareth:</p>
               </div>
               
               <div className="grid gap-4">
                 <a 
-                  href="mailto:mark@testudo.com" 
+                  href="mailto:gareth.haagman@testudo.co" 
                   className="border border-pipboy-shadow p-3 rounded hover:bg-pipboy-shadow/20 flex items-center"
                 >
                   <Mail className="mr-3" />
-                  <span>mark@testudo.com</span>
+                  <span>Gareth@testudo.co</span>
                 </a>
                 <a 
-                  href="https://linkedin.com/in/mark" 
+                  href="https://linkedin.com/in/garethhaagman" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="border border-pipboy-shadow p-3 rounded hover:bg-pipboy-shadow/20 flex items-center"
                 >
                   <Linkedin className="mr-3" />
-                  <span>linkedin.com/in/mark</span>
+                  <span>linkedin.com/in/Gareth</span>
                 </a>
                 <a 
-                  href="https://calendly.com/mark-testudo" 
+                  href="https://calendly.com/garethhaagman" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="border border-pipboy-shadow p-3 rounded hover:bg-pipboy-shadow/20 flex items-center"

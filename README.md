@@ -1,73 +1,83 @@
-# Welcome to your Lovable project
+# HAAG-MAN Terminal
 
-## Project info
+![React](https://img.shields.io/badge/React-61DAFB.svg?style=for-the-badge&logo=React&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=TypeScript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF.svg?style=for-the-badge&logo=Vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4.svg?style=for-the-badge&logo=Tailwind-CSS&logoColor=white)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000.svg?style=for-the-badge&logo=shadcnui&logoColor=white)
 
-**URL**: https://lovable.dev/projects/2b093ec9-be72-4994-9ba0-4643340655a7
+## 📋 Description
 
-## How can I edit this code?
+An interactive terminal-style interface designed as a digital resume. This project showcases professional experience and skills through a retro-futuristic terminal UI, complete with CRT screen effects, boot-up sequences, and authentic sound effects.
 
-There are several ways of editing your application.
+## ✨ Features
 
-**Use Lovable**
+- 🎮 Authentic Pip-Boy experience with CRT screen effects and retro terminal aesthetics
+- 🔊 Interactive sound effects for a fully immersive experience
+- 📊 Multiple sections including Bio, Timeline, Projects, Media, and Contact information
+- 📱 Responsive design for desktop and mobile devices
+- 🔄 Animated transitions between sections
+- 🖥️ Boot sequence simulation
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2b093ec9-be72-4994-9ba0-4643340655a7) and start prompting.
+## 🚀 Live Demo
 
-Changes made via Lovable will be committed automatically to this repo.
+https://www,garethhaagman.com
 
-**Use your preferred IDE**
+## 🛠️ Tech Stack
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **UI Components**: shadcn/ui (Radix UI)
+- **Styling**: Tailwind CSS
+- **Animation**: CSS animations and Tailwind CSS Animate
+- **Routing**: React Router
+- **Data Fetching**: TanStack Query (React Query)
+- **Form Handling**: React Hook Form with Zod validation
+- **Audio**: Howler.js
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🏁 Getting Started
 
-Follow these steps:
+### Prerequisites
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- Node.js (v18 or higher)
+- npm or bun
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Installation
 
-# Step 3: Install the necessary dependencies.
-npm i
+```bash
+# Clone the repository
+git clone <repository-url>
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Navigate to the project directory
+cd insuru-guru-pipboy-resume
+
+# Install dependencies
+npm install
+# or
+bun install
+
+# Start the development server
 npm run dev
+# or
+bun run dev
 ```
 
-**Edit a file directly in GitHub**
+The development server will start at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 📦 Build
 
-**Use GitHub Codespaces**
+```bash
+# Build for production
+npm run build
+# or
+bun run build
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Preview the production build
+npm run preview
+# or
+bun run preview
+```
+## 👤 Author
 
-## What technologies are used for this project?
+Created by [Gareth Haagman](https://github.com/garethhaagman)
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/2b093ec9-be72-4994-9ba0-4643340655a7) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)

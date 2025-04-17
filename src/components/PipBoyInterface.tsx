@@ -8,7 +8,7 @@ import MediaSection from './sections/MediaSection';
 import ContactSection from './sections/ContactSection';
 import { useSoundEffects } from './SoundEffects';
 
-const PipBoyInterface = () => {
+const TerminalInterface = () => {
   const [activeTab, setActiveTab] = useState('status');
   const { playClickSound } = useSoundEffects();
 
@@ -21,8 +21,8 @@ const PipBoyInterface = () => {
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className="h-12 bg-pipboy-background border-b-2 border-pipboy-shadow flex items-center justify-between px-4">
-        <div className="text-pipboy-amber text-xl">TESTUDO-TRAC™</div>
-        <div className="text-pipboy-primary text-xl">INSURU GURU v1.0</div>
+        <div className="text-pipboy-amber text-xl">HAAG-MAN TERMINAL™</div>
+        <div className="text-pipboy-primary text-xl">HAAG-MAN v1.0</div>
       </div>
       
       {/* Main content */}
@@ -89,4 +89,4 @@ const PipBoyInterface = () => {
   );
 };
 
-export default PipBoyInterface;
+export default TerminalInterface;

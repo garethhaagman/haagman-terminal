@@ -14,7 +14,7 @@ const TimelineSection = () => {
       period: "2023 - 2024",
       company: "Superscript",
       role: "Digital-Asset Custody Lead",
-      description: "Solved Lloyd's market capacity constraints for crypto custodians by crafting crime/specie programmes grounded in private-key security best practices."
+      description: "Solved Lloyd's Garethet capacity constraints for crypto custodians by crafting crime/specie programmes grounded in private-key security best practices."
     },
     {
       period: "2021 - 2023",

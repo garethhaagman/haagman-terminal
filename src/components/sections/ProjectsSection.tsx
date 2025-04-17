@@ -19,7 +19,7 @@ const ProjectsSection = () => {
       name: "EstateSecure™ Policy Suite",
       year: 2015,
       description: "45k policies sold; 98% claims-free.",
-      metrics: ["Market innovation", "High retention rate", "Award-winning product"]
+      metrics: ["Garethet innovation", "High retention rate", "Award-winning product"]
     }
   ];
 
