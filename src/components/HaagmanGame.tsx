@@ -453,7 +453,7 @@ const HaagmanGame = () => {
     <div className="flex flex-col h-full">
       {/* Game header with score and attempts */}
       <div className="flex items-center justify-between mb-4 border-b border-pipboy-shadow pb-2">
-        <div className="text-pipboy-amber text-sm">TERMINAL GAME v1.0</div>
+        <div className="text-pipboy-amber text-sm">HANGMAN GAME v1.0</div>
         <div className="flex space-x-4">
           <div className="text-pipboy-primary text-sm">
             SCORE: <span className="text-pipboy-amber">{score}</span>
