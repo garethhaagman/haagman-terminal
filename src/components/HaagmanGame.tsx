@@ -12,6 +12,9 @@ const HaagmanGame = () => {
   // Tracking if component is mounted to prevent state updates after unmount
   const isMounted = useRef(true);
   const initializedRef = useRef(false);
+  const timeoutRef = useRef<number | null>(null);
+  const isTransitioningRef = useRef(false);
+  const loadingTimerRef = useRef<number | null>(null); // Add a reference to track loading time
   
   // Game state
   const [word, setWord] = useState<string>('');
@@ -21,6 +24,9 @@ const HaagmanGame = () => {
   const [score, setScore] = useState<number>(0);
   const [highScore, setHighScore] = useState<number>(0);
   const { playClickSound, playGameSound } = useSoundEffects();
+  
+  // Add some local state to track the button loading state
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
   
   // Enhanced word bank with longer, more technical software engineering terms
   const wordBank = useMemo(() => [
@@ -58,14 +64,44 @@ const HaagmanGame = () => {
   
   // Select a random word from the word bank
   const getRandomWord = useCallback(() => {
-    const randomIndex = Math.floor(Math.random() * wordBank.length);
-    // Clone the word to ensure it's a fresh string reference
-    return wordBank[randomIndex];
+    try {
+      const randomIndex = Math.floor(Math.random() * wordBank.length);
+      // Make sure we have a word
+      if (!wordBank[randomIndex]) {
+        console.error('Failed to select a valid word');
+        return 'FALLBACK';
+      }
+      return wordBank[randomIndex];
+    } catch (error) {
+      console.error('Error selecting word:', error);
+      return 'FALLBACK';
+    }
   }, [wordBank]);
+  
+  // Clean up any pending timeouts
+  const clearGameTimeouts = useCallback(() => {
+    if (timeoutRef.current !== null) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    
+    // Also clear the loading timer if it exists
+    if (loadingTimerRef.current !== null) {
+      clearTimeout(loadingTimerRef.current);
+      loadingTimerRef.current = null;
+    }
+  }, []);
   
   // Initialize or reset the game
   const initGame = useCallback(() => {
     if (!isMounted.current) return;
+    
+    // Clear any pending state transitions
+    clearGameTimeouts();
+    
+    // Reset transition flags for safety
+    isTransitioningRef.current = false;
+    setIsButtonLoading(false);
     
     // First set to loading state to prevent visual glitches
     setGameState('loading');
@@ -74,7 +110,7 @@ const HaagmanGame = () => {
     const newWord = getRandomWord();
     
     // Use setTimeout to ensure state updates are batched and rendering is smooth
-    setTimeout(() => {
+    timeoutRef.current = window.setTimeout(() => {
       if (!isMounted.current) return;
       
       // Reset game state with the new word
@@ -83,23 +119,173 @@ const HaagmanGame = () => {
       setRemainingAttempts(6);
       setGameState('playing');
       playClickSound();
+      
+      // Clear the timeout reference
+      timeoutRef.current = null;
     }, 400); // Slightly longer delay for better transition effect
-  }, [getRandomWord, playClickSound]);
+  }, [getRandomWord, playClickSound, clearGameTimeouts]);
+  
+  // Function specifically for continuing with a new word after winning
+  const handleContinueClick = useCallback(() => {
+    // Prevent action if not in won state, already loading, or transitioning
+    if (gameState !== 'won' || isButtonLoading || isTransitioningRef.current) return;
+    
+    // Mark as transitioning to prevent multiple attempts
+    isTransitioningRef.current = true;
+    
+    // Set button to loading state to prevent multiple clicks
+    setIsButtonLoading(true);
+    
+    // Play sound for feedback
+    playClickSound();
+    
+    // Clear any pending transitions
+    clearGameTimeouts();
+    
+    try {
+      // Get a new word for the next round
+      const nextWord = getRandomWord();
+      
+      // First transition to loading state
+      setGameState('loading');
+      
+      // Use the existing timeout ref to track this operation
+      timeoutRef.current = window.setTimeout(() => {
+        if (!isMounted.current) return;
+        
+        // Set all states in a batch to ensure consistency
+        setWord(nextWord);
+        setGuessedLetters(new Set());
+        setRemainingAttempts(6);
+        setGameState('playing');
+        
+        // Reset button state and transitioning flag
+        setIsButtonLoading(false);
+        isTransitioningRef.current = false;
+        
+        // Clear the timeout reference
+        timeoutRef.current = null;
+      }, 500);
+    } catch (error) {
+      // Recover from errors by resetting flags
+      console.error('Error during continue action:', error);
+      setIsButtonLoading(false);
+      isTransitioningRef.current = false;
+      
+      // Force a reset to a stable state
+      initGame();
+    }
+  }, [gameState, getRandomWord, playClickSound, clearGameTimeouts, isButtonLoading, initGame]);
   
   // Function specifically for handling retry button clicks
   const handleRetryClick = useCallback(() => {
-    if (gameState !== 'won' && gameState !== 'lost') return;
+    // Prevent action if not in lost state, already loading, or transitioning
+    if (gameState !== 'lost' || isButtonLoading || isTransitioningRef.current) return;
     
+    // Mark as transitioning to prevent multiple attempts
+    isTransitioningRef.current = true;
+    
+    // Set button to loading state
+    setIsButtonLoading(true);
+    
+    // Play sound for feedback
     playClickSound();
-    initGame();
-  }, [initGame, playClickSound, gameState]);
+    
+    // Clear any pending transitions
+    clearGameTimeouts();
+    
+    try {
+      // Get a new word for the next round
+      const nextWord = getRandomWord();
+      
+      // First transition to loading state
+      setGameState('loading');
+      
+      // Use the existing timeout ref to track this operation
+      timeoutRef.current = window.setTimeout(() => {
+        if (!isMounted.current) return;
+        
+        // Apply all state changes in a batch
+        setWord(nextWord);
+        setGuessedLetters(new Set());
+        setRemainingAttempts(6);
+        setScore(0); // Reset score on retry
+        setGameState('playing');
+        
+        // Reset button state and transitioning flag
+        setIsButtonLoading(false);
+        isTransitioningRef.current = false;
+        
+        // Clear the timeout reference
+        timeoutRef.current = null;
+      }, 500);
+    } catch (error) {
+      // Recover from errors by resetting flags
+      console.error('Error during retry action:', error);
+      setIsButtonLoading(false);
+      isTransitioningRef.current = false;
+      
+      // Force a reset to a stable state
+      initGame();
+    }
+  }, [gameState, isButtonLoading, clearGameTimeouts, playClickSound, getRandomWord, initGame]);
+  
+  // Watch for state changes and set up recovery for stuck loading states
+  useEffect(() => {
+    // Clear any existing loading timer
+    if (loadingTimerRef.current !== null) {
+      clearTimeout(loadingTimerRef.current);
+      loadingTimerRef.current = null;
+    }
+    
+    // Only set a recovery timer when we're in the loading state
+    if (gameState === 'loading') {
+      // If we're stuck in loading for more than 3 seconds, attempt recovery
+      loadingTimerRef.current = window.setTimeout(() => {
+        if (!isMounted.current) return;
+        
+        // Only attempt recovery if we're still in the loading state
+        if (gameState === 'loading') {
+          console.warn('Game appears stuck in loading state - attempting recovery');
+          
+          // Reset all critical state flags
+          isTransitioningRef.current = false;
+          setIsButtonLoading(false);
+          
+          // Force a game reset to recover
+          initGame();
+        }
+        
+        // Clear the timer reference
+        loadingTimerRef.current = null;
+      }, 3000); // 3 second timeout for loading state
+    }
+    
+    // Clean up on unmount or state change
+    return () => {
+      if (loadingTimerRef.current !== null) {
+        clearTimeout(loadingTimerRef.current);
+        loadingTimerRef.current = null;
+      }
+    };
+  }, [gameState, initGame]);
   
   // Clean up on unmount
   useEffect(() => {
     return () => {
       isMounted.current = false;
+      clearGameTimeouts();
+      
+      // Make sure we clear any lingering flags
+      isTransitioningRef.current = false;
+      
+      // Also clear the loading timer if it exists
+      if (loadingTimerRef.current !== null) {
+        clearTimeout(loadingTimerRef.current);
+        loadingTimerRef.current = null;
+      }
     };
-  }, []);
+  }, [clearGameTimeouts]);
   
   // Start new game on initial load - with special handling for the first load
   useEffect(() => {
@@ -115,17 +301,23 @@ const HaagmanGame = () => {
     // Pick a word immediately to reduce initialization time
     const initialWord = getRandomWord();
     
+    // Clear any pending timeouts first
+    clearGameTimeouts();
+    
     // Set a delay to ensure DOM is ready and initialization is smooth
-    const timer = setTimeout(() => {
+    timeoutRef.current = window.setTimeout(() => {
       if (!isMounted.current) return;
       
       // Apply the initial word and transition to playing state
       setWord(initialWord);
       setGameState('playing');
+      
+      // Clear the timeout reference
+      timeoutRef.current = null;
     }, 1000);
     
-    return () => clearTimeout(timer);
-  }, [getRandomWord]);
+    return () => clearGameTimeouts();
+  }, [getRandomWord, clearGameTimeouts]);
   
   // Check win/lose conditions whenever relevant state changes
   useEffect(() => {
@@ -156,15 +348,49 @@ const HaagmanGame = () => {
   // Process keyboard input for letter guessing
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't process keys if component is unmounting or not mounted
+      if (!isMounted.current) return;
+      
       // Prevent default behavior for game-related keys
       if (/^[A-Z]$/i.test(e.key)) {
         e.preventDefault();
       }
       
+      // Don't process keys if we're in a transition or loading state
+      if (isTransitioningRef.current || isButtonLoading || gameState === 'loading') return;
+      
       if (gameState !== 'playing') {
         // If game is over, any key will start a new game
-        if (gameState === 'won' || gameState === 'lost') {
-          initGame();
+        if (gameState === 'won') {
+          // Use a timeout to prevent immediate re-triggering
+          if (!isTransitioningRef.current) {
+            // Mark as transitioning immediately to prevent multiple triggers
+            isTransitioningRef.current = true;
+            setTimeout(() => {
+              if (isMounted.current) {
+                handleContinueClick();
+              } else {
+                // Reset flag if component unmounted during timeout
+                isTransitioningRef.current = false;
+              }
+            }, 50);
+          }
+          return;
+        } else if (gameState === 'lost') {
+          // Use a timeout to prevent immediate re-triggering
+          if (!isTransitioningRef.current) {
+            // Mark as transitioning immediately to prevent multiple triggers
+            isTransitioningRef.current = true;
+            setTimeout(() => {
+              if (isMounted.current) {
+                handleRetryClick();
+              } else {
+                // Reset flag if component unmounted during timeout
+                isTransitioningRef.current = false;
+              }
+            }, 50);
+          }
+          return;
         }
         return;
       }
@@ -187,11 +413,15 @@ const HaagmanGame = () => {
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [gameState, guessedLetters, word, playGameSound, initGame]);
+  }, [gameState, guessedLetters, word, playGameSound, handleContinueClick, handleRetryClick, isButtonLoading]);
   
   // Handle clicking on a letter in the onscreen keyboard
   const handleLetterClick = useCallback((letter: string) => {
-    if (gameState !== 'playing' || guessedLetters.has(letter)) return;
+    // Don't process if we're not in playing state, transitioning, or already guessed
+    if (gameState !== 'playing' || 
+        guessedLetters.has(letter) || 
+        isTransitioningRef.current || 
+        isButtonLoading) return;
     
     // Add the guessed letter to the set
     setGuessedLetters(prev => new Set([...prev, letter]));
@@ -203,7 +433,7 @@ const HaagmanGame = () => {
     } else {
       playGameSound('correct');
     }
-  }, [gameState, guessedLetters, word, playGameSound]);
+  }, [gameState, guessedLetters, word, playGameSound, isButtonLoading]);
   
   // Render the word with guessed letters revealed and underscores for hidden letters
   const renderWord = useCallback(() => {
@@ -491,12 +721,23 @@ const HaagmanGame = () => {
                   {gameState === 'lost' ? `The word was: ${word}` : 'Decryption complete'}
                 </div>
                 <button
-                  onClick={handleRetryClick}
-                  className="bg-pipboy-shadow/30 text-pipboy-primary hover:bg-pipboy-shadow/50 
+                  onClick={gameState === 'won' ? handleContinueClick : handleRetryClick}
+                  className={`
+                    bg-pipboy-shadow/30 text-pipboy-primary hover:bg-pipboy-shadow/50 
                     border border-pipboy-primary/50 px-4 py-1 rounded text-sm
-                    transition-all duration-200 hover:bg-pipboy-shadow/70 focus:outline-none focus:ring-2 focus:ring-pipboy-primary/50"
+                    transition-all duration-200 hover:bg-pipboy-shadow/70 
+                    focus:outline-none focus:ring-2 focus:ring-pipboy-primary/50
+                    ${isButtonLoading ? 'opacity-70 cursor-wait' : ''}
+                  `}
+                  disabled={isButtonLoading}
                 >
-                  {gameState === 'won' ? 'DECRYPT NEXT SEQUENCE' : 'RETRY ACCESS'}
+                  {gameState === 'won' 
+                    ? isButtonLoading 
+                      ? 'DECRYPTING...' 
+                      : 'DECRYPT NEXT SEQUENCE' 
+                    : isButtonLoading
+                      ? 'RETRYING...'
+                      : 'RETRY ACCESS'}
                 </button>
               </div>
             )}
@@ -514,6 +755,7 @@ const HaagmanGame = () => {
         <div className="text-xs text-center text-pipboy-primary/70">
           HAAG-MAN SECURITY TERMINAL // 
           {gameState === 'loading' ? 'INITIALIZING...' : 
+           isTransitioningRef.current ? 'TRANSITIONING...' :
            gameState === 'playing' ? 'PICK A LETTER OR TYPE TO GUESS' : 
            'PRESS ANY KEY TO CONTINUE'}
         </div>
