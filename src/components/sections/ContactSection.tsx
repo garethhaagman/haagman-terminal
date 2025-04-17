@@ -1,4 +1,3 @@
-
 import { MessageSquare, Linkedin, Calendar, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -54,13 +53,13 @@ const ContactSection = () => {
           className={`
             border border-pipboy-shadow/50 rounded p-6 bg-pipboy-shadow/10 cursor-pointer
             flex flex-col items-center justify-center
-            ${activeMethod === 'calendly' ? 'bg-pipboy-shadow/30' : ''}
+            ${activeMethod === 'calendar' ? 'bg-pipboy-shadow/30' : ''}
             hover:bg-pipboy-shadow/20 transition-colors
           `}
-          onClick={() => setActiveMethod('calendly')}
+          onClick={() => setActiveMethod('calendar')}
         >
           <Calendar className="w-12 h-12 mb-4" />
-          <div className="text-lg font-bold">CALENDLY</div>
+          <div className="text-lg font-bold">CALENDAR</div>
           <div className="text-xs mt-2 text-pipboy-primary/70">Schedule Meeting</div>
         </div>
       </div>
@@ -92,7 +91,7 @@ const ContactSection = () => {
                   className="border border-pipboy-shadow p-3 rounded hover:bg-pipboy-shadow/20 flex items-center"
                 >
                   <Mail className="mr-3" />
-                  <span>Gareth@testudo.co</span>
+                  <span>gareth.haagman@testudo.co</span>
                 </a>
                 <a 
                   href="https://linkedin.com/in/garethhaagman" 
@@ -101,10 +100,10 @@ const ContactSection = () => {
                   className="border border-pipboy-shadow p-3 rounded hover:bg-pipboy-shadow/20 flex items-center"
                 >
                   <Linkedin className="mr-3" />
-                  <span>linkedin.com/in/Gareth</span>
+                  <span>linkedin.com/in/garethhaagman</span>
                 </a>
                 <a 
-                  href="https://calendly.com/garethhaagman" 
+                  href="https://calendar.app.google/P2JkkBZuGRog1ca78" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="border border-pipboy-shadow p-3 rounded hover:bg-pipboy-shadow/20 flex items-center"
