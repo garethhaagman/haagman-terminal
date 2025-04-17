@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import BioSection from './sections/BioSection';
 import TimelineSection from './sections/TimelineSection';
 import ProjectsSection from './sections/ProjectsSection';
 import MediaSection from './sections/MediaSection';
 import ContactSection from './sections/ContactSection';
+import HaagmanGame from './HaagmanGame';
 import { useSoundEffects } from './SoundEffects';
 
 const TerminalInterface = () => {
   const [activeTab, setActiveTab] = useState('status');
+  const [isGameOpen, setIsGameOpen] = useState(false);
   const { playClickSound } = useSoundEffects();
 
   const handleTabChange = (value: string) => {
@@ -16,12 +19,34 @@ const TerminalInterface = () => {
     setActiveTab(value);
   };
 
+  // Handle Easter egg activation
+  const handleEasterEggClick = () => {
+    playClickSound();
+    setIsGameOpen(true);
+  };
+
+  // Render the HAAG-MAN v1.0 header with clickable "A"
+  const renderLogo = () => {
+    return (
+      <div className="text-pipboy-primary text-xl">
+        H
+        <span className="text-pipboy-primary">A</span>
+        <span 
+          className="text-pipboy-primary cursor-pointer hover:text-pipboy-amber transition-colors"
+          onClick={handleEasterEggClick}
+          title="???"
+        >A</span>
+        G-MAN v1.0
+      </div>
+    );
+  };
+
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className="h-12 bg-pipboy-background border-b-2 border-pipboy-shadow flex items-center justify-between px-4">
         <div className="text-pipboy-amber text-xl">HAAG-MAN TERMINAL™</div>
-        <div className="text-pipboy-primary text-xl">HAAG-MAN v1.0</div>
+        {renderLogo()}
       </div>
       
       {/* Main content */}
@@ -84,6 +109,13 @@ const TerminalInterface = () => {
           </div>
         </Tabs>
       </div>
+      
+      {/* Game Dialog */}
+      <Dialog open={isGameOpen} onOpenChange={setIsGameOpen}>
+        <DialogContent className="bg-pipboy-background border-pipboy-primary text-pipboy-primary max-w-3xl">
+          <HaagmanGame />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

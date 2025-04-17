@@ -46,7 +46,6 @@ const TimelineSection = () => {
             <div className="flex justify-between items-center">
               <div className="text-pipboy-amber text-base font-bold">{entry.period}</div>
               <div className="flex items-center">
-                <Clock className="w-4 h-4 mr-1" />
                 <a 
                   href={entry.companyUrl} 
                   target="_blank" 
