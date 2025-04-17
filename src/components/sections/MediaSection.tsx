@@ -1,9 +1,16 @@
-
-import { Radio, Volume2, Monitor } from 'lucide-react';
-import { useState } from 'react';
+import { Radio, Volume2, Monitor, RefreshCw, Twitter, AlertTriangle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { fetchUserTweets } from '../../services/twitterService';
+import { TweetData } from '../../types/twitter';
+import Tweet from '../Tweet';
 
 const MediaSection = () => {
   const [activeStation, setActiveStation] = useState<number | null>(null);
+  const [tweets, setTweets] = useState<TweetData[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [connectionError, setConnectionError] = useState<boolean>(false);
+  const [retryCount, setRetryCount] = useState<number>(0);
   
   const mediaStations = [
     { 
@@ -14,6 +21,70 @@ const MediaSection = () => {
       status: "LIVE" 
     },
   ];
+
+  // Fetch tweets when the Twitter station is selected
+  useEffect(() => {
+    if (activeStation === 1) {
+      fetchTweets();
+    }
+  }, [activeStation]);
+
+  /**
+   * Fetch tweets from the Twitter API
+   */
+  const fetchTweets = async () => {
+    setIsLoading(true);
+    setError(null);
+    setConnectionError(false);
+    console.log("Attempting to fetch tweets...");
+    
+    try {
+      // Get Twitter username from env vars or fallback to default
+      const username = import.meta.env.VITE_TWITTER_USERNAME || 'garethhaagman';
+      console.log("Using Twitter username:", username);
+      
+      // Check if API token is available
+      if (!import.meta.env.VITE_TWITTER_BEARER_TOKEN) {
+        console.error("No Twitter API token found");
+        setConnectionError(true);
+        setError('transmission link could not be established...');
+        setIsLoading(false);
+        return;
+      }
+      
+      const tweetData = await fetchUserTweets(username, 5);
+      console.log("Tweets fetched successfully:", tweetData);
+      setTweets(tweetData);
+      // Reset retry count on success
+      setRetryCount(0);
+    } catch (err) {
+      console.error('Error loading tweets:', err);
+      setConnectionError(true);
+      setError('transmission link could not be established...');
+      // Increment retry count
+      setRetryCount(prev => prev + 1);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Handle refresh button click
+   */
+  const handleRefreshTweets = () => {
+    console.log("Refreshing tweets...");
+    fetchTweets();
+  };
+  
+  /**
+   * Get error details based on retry count
+   */
+  const getErrorDetails = () => {
+    if (retryCount > 2) {
+      return "CRITICAL FAILURE - RATE LIMIT EXCEEDED";
+    }
+    return "NETWORK STATUS: OFFLINE";
+  };
   
   return (
     <div className="flex flex-col h-full space-y-6">
@@ -46,9 +117,10 @@ const MediaSection = () => {
                   <div className={`
                     ${station.status === 'TRANSMITTING' ? 'text-pipboy-primary animate-pulse' : 
                       station.status === 'STANDBY' ? 'text-pipboy-amber' : 
+                      connectionError && activeStation === station.id ? 'text-pipboy-amber' :
                       'text-pipboy-primary/50'}
                   `}>
-                    {station.status}
+                    {connectionError && activeStation === station.id ? 'DISCONNECTED' : station.status}
                   </div>
                 </div>
               </div>
@@ -61,13 +133,72 @@ const MediaSection = () => {
             <h3 className="text-pipboy-amber text-lg">SIGNAL MONITOR</h3>
             {activeStation !== null && (
               <div className="flex items-center">
-                <Volume2 className="w-4 h-4 mr-1 text-pipboy-primary" />
-                <div className="text-xs">RECEIVING</div>
+                {activeStation === 1 && !isLoading && (
+                  <button 
+                    onClick={handleRefreshTweets}
+                    className="flex items-center text-pipboy-primary hover:text-pipboy-amber mr-3"
+                    title="Refresh tweets"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                )}
+                {!connectionError ? (
+                  <>
+                    <Volume2 className="w-4 h-4 mr-1 text-pipboy-primary" />
+                    <div className="text-xs">RECEIVING</div>
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle className="w-4 h-4 mr-1 text-pipboy-amber" />
+                    <div className="text-xs text-pipboy-amber">OFFLINE</div>
+                  </>
+                )}
               </div>
             )}
           </div>
           
-          {activeStation !== null ? (
+          {activeStation === 1 ? (
+            <div className="h-64 overflow-y-auto pr-1">
+              {isLoading ? (
+                <div className="h-full flex flex-col items-center justify-center">
+                  <RefreshCw className="w-8 h-8 text-pipboy-primary animate-spin mb-2" />
+                  <div className="text-sm">ESTABLISHING CONNECTION...</div>
+                </div>
+              ) : connectionError ? (
+                <div className="h-full flex flex-col items-center justify-center text-pipboy-amber">
+                  <AlertTriangle className="w-12 h-12 mb-4 text-pipboy-amber" />
+                  <div className="text-center">
+                    <div className="mb-2 uppercase">{error}</div>
+                    <div className="text-xs mb-4">{getErrorDetails()}</div>
+                  </div>
+                </div>
+              ) : tweets.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-pipboy-primary/50">
+                  <Twitter className="w-16 h-16 mb-4" />
+                  <div className="text-center">
+                    <div>NO TRANSMISSIONS FOUND</div>
+                    <div className="text-xs mt-2">BUFFER EMPTY - AWAITING DATA</div>
+                    <button 
+                      onClick={handleRefreshTweets}
+                      className="text-xs border border-pipboy-primary/50 rounded px-3 py-1 mt-4 hover:bg-pipboy-shadow/20"
+                    >
+                      CHECK TRANSMISSION
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="mb-3 flex items-center border-b border-pipboy-shadow/20 pb-2">
+                    <Twitter className="w-5 h-5 mr-2 text-pipboy-primary" />
+                    <span className="text-sm">@{import.meta.env.VITE_TWITTER_USERNAME || 'garethhaagman'}'s Recent Transmissions</span>
+                  </div>
+                  {tweets.map(tweet => (
+                    <Tweet key={tweet.id} tweet={tweet} />
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : activeStation !== null ? (
             <div className="h-48 flex flex-col items-center justify-center">
               <Monitor className="w-16 h-16 mb-4 text-pipboy-primary animate-pulse" />
               <div className="text-center">

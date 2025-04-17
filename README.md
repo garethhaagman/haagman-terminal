@@ -81,3 +81,63 @@ bun run preview
 
 Created by [Gareth Haagman](https://github.com/garethhaagman)
 
+# Insuru Guru Pipboy Resume
+
+A Fallout-inspired portfolio website with Twitter integration.
+
+## Twitter API Integration
+
+This project integrates with the Twitter API to display recent tweets in the Media Section.
+
+### Setup
+
+1. **Twitter Developer Account**
+   - Create a Twitter Developer account at [developer.twitter.com](https://developer.twitter.com)
+   - Create a project and app to obtain API credentials
+
+2. **Environment Variables**
+   - Copy `.env.example` to `.env`:
+     ```bash
+     cp .env.example .env
+     ```
+   - Fill in your Twitter API credentials in the `.env` file:
+     ```
+     VITE_TWITTER_API_KEY=your_twitter_api_key
+     VITE_TWITTER_API_SECRET=your_twitter_api_secret
+     VITE_TWITTER_BEARER_TOKEN=your_twitter_bearer_token
+     VITE_TWITTER_USERNAME=garethhaagman
+     ```
+
+3. **Restart Development Server**
+   - After setting up environment variables, restart the development server:
+     ```bash
+     npm run dev
+     ```
+
+## Troubleshooting
+
+If you encounter issues with the Twitter integration:
+
+1. **Check API Credentials**
+   - Ensure your Twitter API credentials are correct
+   - Verify that your Twitter Developer account has the appropriate access level
+
+2. **Network Issues**
+   - The application will display "transmission link could not be established..." if it cannot connect to the Twitter API
+   - Check your internet connection and API rate limits
+
+3. **Console Errors**
+   - Check the browser console for detailed error messages
+
+## Development
+
+For local development:
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
