@@ -12,7 +12,7 @@ An interactive terminal-style interface designed as a digital resume. This proje
 
 ## ✨ Features
 
-- 🎮 Authentic Pip-Boy experience with CRT screen effects and retro terminal aesthetics
+- 🎮 Authentic CRT screen effects and retro terminal aesthetics
 - 🔊 Interactive sound effects for a fully immersive experience
 - 📊 Multiple sections including Bio, Timeline, Projects, Media, and Contact information
 - 📱 Responsive design for desktop and mobile devices
@@ -49,7 +49,7 @@ https://www,garethhaagman.com
 git clone <repository-url>
 
 # Navigate to the project directory
-cd insuru-guru-pipboy-resume
+cd haagman-terminal
 
 # Install dependencies
 npm install
@@ -62,7 +62,7 @@ npm run dev
 bun run dev
 ```
 
-The development server will start at `http://localhost:5173`
+The development server will start at `http://localhost:8080
 
 ## 📦 Build
 
@@ -81,9 +81,7 @@ bun run preview
 
 Created by [Gareth Haagman](https://github.com/garethhaagman)
 
-# Insuru Guru Pipboy Resume
-
-A Fallout-inspired portfolio website with Twitter integration.
+# Haagman Terminal Resume
 
 ## Twitter API Integration
 
