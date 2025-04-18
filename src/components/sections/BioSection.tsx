@@ -91,9 +91,6 @@ const BioSection = () => {
               <span className="text-pipboy-amber mr-2">&gt;</span>
               <span>Previously, Gareth worked as a software engineer at Goldman Sachs in the Asset and Wealth Management division, where he contributed to both artificial intelligence and automated reporting initiatives. He also holds a part-time master's in Software Engineering from the University of Warwick and a degree in Mathematics from the University of Exeter.</span>
             </p>      
-            <div className="mt-4 border border-pipboy-shadow/30 p-2 bg-pipboy-shadow/5 rounded text-center text-sm">
-              <span className="text-pipboy-amber">SYSTEM NOTE:</span> Subject demonstrates exceptional problem-solving capabilities under pressure
-            </div>
           </div>
         </div>
       </div>
