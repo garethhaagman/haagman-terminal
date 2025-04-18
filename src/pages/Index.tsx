@@ -1,5 +1,5 @@
 
-import PipBoy from '../components/PipBoy';
+import PipBoy from '../components/Terminal';
 
 const Index = () => {
   return <PipBoy />;

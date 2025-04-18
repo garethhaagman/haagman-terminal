@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import BootSequence from './BootSequence';
-import TerminalInterface from './PipBoyInterface';
+import TerminalInterface from './TerminalInterface';
 import { useSoundEffects } from './SoundEffects';
 import { useIsMobile } from '@/hooks/use-mobile';
 
