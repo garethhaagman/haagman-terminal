@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSoundEffects } from './SoundEffects';
+import { useIsMobile } from '../hooks/use-mobile';
 
 // Game state types with additional 'loading' state to handle initialization
 type GameState = 'loading' | 'playing' | 'won' | 'lost';
@@ -15,6 +16,7 @@ const HaagmanGame = () => {
   const timeoutRef = useRef<number | null>(null);
   const isTransitioningRef = useRef(false);
   const loadingTimerRef = useRef<number | null>(null); // Add a reference to track loading time
+  const isMobile = useIsMobile(); // Use the mobile detection hook
   
   // Game state
   const [word, setWord] = useState<string>('');
@@ -464,7 +466,7 @@ const HaagmanGame = () => {
     }
     
     // Handle extremely long words by wrapping if needed
-    const lettersPerRow = Math.min(15, word.length);
+    const lettersPerRow = isMobile ? Math.min(10, word.length) : Math.min(15, word.length);
     const rows = [];
     
     for (let i = 0; i < word.length; i += lettersPerRow) {
@@ -486,13 +488,16 @@ const HaagmanGame = () => {
               return (
                 <div 
                   key={`letter-box-${index}`}
-                  className="relative w-7 h-10 flex flex-col items-center justify-end"
+                  className={`
+                    relative flex flex-col items-center justify-end
+                    ${isMobile ? 'w-6 h-8' : 'w-7 h-10'}
+                  `}
                 >
                   {/* Letter display - invisible if not guessed */}
                   <div 
                     className={`
                       absolute top-0 inset-x-0 h-8 flex items-center justify-center
-                      text-xl font-mono font-bold
+                      ${isMobile ? 'text-lg' : 'text-xl'} font-mono font-bold
                       transition-all duration-300 ease-in-out
                       ${isGuessed 
                         ? 'opacity-100 text-pipboy-primary transform-none' 
@@ -506,7 +511,7 @@ const HaagmanGame = () => {
                   {/* Underscore - always visible */}
                   <div 
                     className={`
-                      h-0.5 w-6 mb-1.5
+                      h-0.5 ${isMobile ? 'w-5' : 'w-6'} mb-1.5
                       ${isGuessed ? 'bg-pipboy-primary' : 'bg-pipboy-shadow'}
                       transition-all duration-300 ease-in-out
                       ${isGuessed ? 'transform scale-110' : 'transform-none'}
@@ -519,7 +524,7 @@ const HaagmanGame = () => {
         ))}
       </div>
     );
-  }, [word, guessedLetters, gameState]);
+  }, [word, guessedLetters, gameState, isMobile]);
   
   // Render the onscreen keyboard
   const renderKeyboard = useCallback(() => {
@@ -531,6 +536,8 @@ const HaagmanGame = () => {
     
     // Show disabled keyboard during loading state
     const isDisabled = gameState === 'loading' || gameState !== 'playing';
+    const buttonSize = isMobile ? 'w-7 h-7' : 'w-8 h-8'; 
+    const fontSize = isMobile ? 'text-sm' : 'text-base';
     
     return (
       <div className="flex flex-col items-center space-y-2">
@@ -557,7 +564,7 @@ const HaagmanGame = () => {
                   onClick={() => handleLetterClick(letter)}
                   disabled={isGuessed || isDisabled}
                   className={`
-                    w-8 h-8 flex items-center justify-center rounded
+                    ${buttonSize} ${fontSize} flex items-center justify-center rounded
                     ${buttonStyle}
                     ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
                     transition-colors duration-200 ease-in-out
@@ -572,7 +579,7 @@ const HaagmanGame = () => {
         ))}
       </div>
     );
-  }, [gameState, guessedLetters, word, handleLetterClick]);
+  }, [gameState, guessedLetters, word, handleLetterClick, isMobile]);
   
   // Render the hangman ASCII art visualization
   const renderHaagman = useCallback(() => {
@@ -649,14 +656,20 @@ const HaagmanGame = () => {
       
     const asciiArt = stages[currentStage];
     
+    // We're keeping the ASCII art even on mobile now, just with smaller text size
     return (
-      <div className={`font-mono text-sm text-pipboy-primary mr-4 ${gameState === 'loading' ? 'opacity-50' : ''}`}>
+      <div className={`font-mono ${isMobile ? 'text-xs' : 'text-sm'} text-pipboy-primary ${isMobile ? 'mb-2' : 'mr-4'} ${gameState === 'loading' ? 'opacity-50' : ''}`}>
         {asciiArt.map((line, index) => (
           <pre key={`line-${index}`}>{line}</pre>
         ))}
+        {isMobile && gameState !== 'loading' && (
+          <div className="text-center text-pipboy-primary text-xs mt-1">
+            {remainingAttempts} attempt{remainingAttempts !== 1 ? 's' : ''} left
+          </div>
+        )}
       </div>
     );
-  }, [remainingAttempts, gameState]);
+  }, [remainingAttempts, gameState, isMobile]);
   
   // Render game status and messages
   const renderGameStatus = useCallback(() => {
@@ -664,27 +677,27 @@ const HaagmanGame = () => {
       return null;
     } else if (gameState === 'won') {
       return (
-        <div className="text-center text-pipboy-primary mb-4 animate-pulse">
+        <div className={`text-center text-pipboy-primary ${isMobile ? 'text-sm' : ''} mb-4 animate-pulse`}>
           ACCESS GRANTED - SECURITY PROTOCOL BYPASSED
         </div>
       );
     } else if (gameState === 'lost') {
       return (
-        <div className="text-center text-pipboy-amber mb-4">
+        <div className={`text-center text-pipboy-amber ${isMobile ? 'text-sm' : ''} mb-4`}>
           ACCESS DENIED - SECURITY LOCKOUT INITIATED
         </div>
       );
     }
     return null;
-  }, [gameState]);
+  }, [gameState, isMobile]);
   
-  // Main render
+  // Main render - with responsive layout adjustments
   return (
     <div className="flex flex-col h-full">
       {/* Game header with score and attempts */}
-      <div className="flex items-center justify-between mb-4 border-b border-pipboy-shadow pb-2">
+      <div className={`flex ${isMobile ? 'flex-col space-y-2' : 'items-center justify-between'} mb-4 border-b border-pipboy-shadow pb-2`}>
         <div className="text-pipboy-amber text-sm">HANGMAN GAME v1.0</div>
-        <div className="flex space-x-4">
+        <div className={`flex ${isMobile ? 'justify-between' : 'space-x-4'}`}>
           <div className="text-pipboy-primary text-sm">
             SCORE: <span className="text-pipboy-amber">{score}</span>
           </div>
@@ -699,16 +712,16 @@ const HaagmanGame = () => {
         </div>
       </div>
       
-      {/* Game content */}
+      {/* Game content - reorganized for mobile */}
       <div className="flex-1 flex flex-col justify-between">
-        <div className="flex">
-          {/* Left side: Hangman visualization */}
-          <div className="w-1/3">
+        <div className={`flex ${isMobile ? 'flex-col items-center' : ''}`}>
+          {/* Hangman visualization - repositioned for mobile */}
+          <div className={isMobile ? 'w-full flex justify-center' : 'w-1/3'}>
             {renderHaagman()}
           </div>
           
-          {/* Right side: Word display and game status */}
-          <div className="w-2/3 flex flex-col">
+          {/* Word display and game status */}
+          <div className={isMobile ? 'w-full' : 'w-2/3'}>
             {renderGameStatus()}
             <div className="transition-opacity duration-300 ease-in-out">
               {renderWord()}
@@ -717,7 +730,7 @@ const HaagmanGame = () => {
             {/* Game over actions */}
             {(gameState === 'won' || gameState === 'lost') && (
               <div className="text-center mb-4 animate-fade-in">
-                <div className="text-xs text-pipboy-primary/70 mb-2">
+                <div className={`text-xs text-pipboy-primary/70 mb-2 ${isMobile ? 'px-2' : ''}`}>
                   {gameState === 'lost' ? `The word was: ${word}` : 'Decryption complete'}
                 </div>
                 <button
@@ -728,6 +741,7 @@ const HaagmanGame = () => {
                     transition-all duration-200 hover:bg-pipboy-shadow/70 
                     focus:outline-none focus:ring-2 focus:ring-pipboy-primary/50
                     ${isButtonLoading ? 'opacity-70 cursor-wait' : ''}
+                    ${isMobile ? 'text-xs py-2 px-3' : ''}
                   `}
                   disabled={isButtonLoading}
                 >
@@ -745,19 +759,19 @@ const HaagmanGame = () => {
         </div>
         
         {/* Keyboard */}
-        <div className="mt-4 transition-opacity duration-300 ease-in-out">
+        <div className={`${isMobile ? 'mt-2' : 'mt-4'} transition-opacity duration-300 ease-in-out`}>
           {renderKeyboard()}
         </div>
       </div>
       
       {/* Footer */}
       <div className="mt-4 pt-2 border-t border-pipboy-shadow/30">
-        <div className="text-xs text-center text-pipboy-primary/70">
+        <div className={`${isMobile ? 'text-2xs' : 'text-xs'} text-center text-pipboy-primary/70`}>
           HAAG-MAN SECURITY TERMINAL // 
           {gameState === 'loading' ? 'INITIALIZING...' : 
            isTransitioningRef.current ? 'TRANSITIONING...' :
-           gameState === 'playing' ? 'PICK A LETTER OR TYPE TO GUESS' : 
-           'PRESS ANY KEY TO CONTINUE'}
+           gameState === 'playing' ? (isMobile ? 'TAP TO GUESS' : 'PICK A LETTER OR TYPE TO GUESS') : 
+           isMobile ? 'TAP TO CONTINUE' : 'PRESS ANY KEY TO CONTINUE'}
         </div>
       </div>
     </div>
