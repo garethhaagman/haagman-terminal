@@ -8,11 +8,13 @@ import MediaSection from './sections/MediaSection';
 import ContactSection from './sections/ContactSection';
 import HaagmanGame from './HaagmanGame';
 import { useSoundEffects } from './SoundEffects';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const TerminalInterface = () => {
   const [activeTab, setActiveTab] = useState('status');
   const [isGameOpen, setIsGameOpen] = useState(false);
   const { playClickSound } = useSoundEffects();
+  const isMobile = useIsMobile();
 
   const handleTabChange = (value: string) => {
     playClickSound();
@@ -112,7 +114,7 @@ const TerminalInterface = () => {
       
       {/* Game Dialog */}
       <Dialog open={isGameOpen} onOpenChange={setIsGameOpen}>
-        <DialogContent className="bg-pipboy-background border-pipboy-primary text-pipboy-primary max-w-3xl">
+        <DialogContent className={`bg-pipboy-background border-pipboy-primary text-pipboy-primary ${isMobile ? 'max-h-[90vh] h-auto max-w-full w-[95%] my-2' : 'max-w-3xl'}`}>
           <HaagmanGame />
         </DialogContent>
       </Dialog>
