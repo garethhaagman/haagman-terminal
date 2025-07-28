@@ -5,6 +5,7 @@
 ![Vite](https://img.shields.io/badge/Vite-646CFF.svg?style=for-the-badge&logo=Vite&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4.svg?style=for-the-badge&logo=Tailwind-CSS&logoColor=white)
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000.svg?style=for-the-badge&logo=shadcnui&logoColor=white)
+<img width="1793" height="1089" alt="image" src="https://github.com/user-attachments/assets/922a5570-75c7-4b87-9717-56d12b86cbc2" />
 
 ## 📋 Description
 
